@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-
 const slug = require('slugs');
 
 const storeSchema = new mongoose.Schema({
@@ -43,7 +42,6 @@ storeSchema.pre('save', function (next) {
   }
   this.slug = slug(this.name);
   next();
-
   // TODO: make more resiliant so lugs are unique
 });
 
