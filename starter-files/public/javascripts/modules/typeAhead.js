@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import dompurify from 'dompurify';
 const searchResultsHTML = stores => stores.map(store => {
   return `
     <a href="/store/${store.slug}" class="search__result">
@@ -28,8 +28,10 @@ const typeAhead = search => {
     axios.get(`/api/search?q=${this.value}`)
     .then(res => {
       if (res.data.length) {
-        searchResults.innerHTML = searchResultsHTML(res.data);
+        searchResults.innerHTML = dompurify.sanitize(searchResultsHTML(res.data));
       }
+      // tell them nothing came back if no results
+      searchResults.innerHTML = dompurify.sanitize(`<div class="search__result">No search results for ${this.value} found!</div>`);
     })
     .catch(err => {
       console.error(err);
