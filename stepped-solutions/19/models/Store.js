@@ -35,7 +35,7 @@ const storeSchema = new mongoose.Schema({
   photo: String
 });
 
-storeSchema.pre('save', function(next) {
+storeSchema.pre('save', function (next) {
   if (!this.isModified('name')) {
     next(); // skip it
     return; // stop this function from running

@@ -6,7 +6,7 @@ const mapOptions = {
   zoom: 10
 };
 
-function loadPlaces(map, lat = 43.2, lng = -79.8) {
+function loadPlaces (map, lat = 43.2, lng = -79.8) {
   axios.get(`/api/stores/near?lat=${lat}&lng=${lng}`)
     .then(res => {
       const places = res.data;
@@ -28,7 +28,7 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
       });
 
       // when someone clicks on a marker, show the details of that place
-      markers.forEach(marker => marker.addListener('click', function() {
+      markers.forEach(marker => marker.addListener('click', function () {
         console.log(this.place);
         const html = `
           <div class="popup">
@@ -46,10 +46,9 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
       map.setCenter(bounds.getCenter());
       map.fitBounds(bounds);
     });
-
 }
 
-function makeMap(mapDiv) {
+function makeMap (mapDiv) {
   if (!mapDiv) return;
   // make our map
   const map = new google.maps.Map(mapDiv, mapOptions);
@@ -59,6 +58,7 @@ function makeMap(mapDiv) {
   const autocomplete = new google.maps.places.Autocomplete(input);
   autocomplete.addListener('place_changed', () => {
     const place = autocomplete.getPlace();
+    console.log(place);
     loadPlaces(map, place.geometry.location.lat(), place.geometry.location.lng());
   });
 }
