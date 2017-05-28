@@ -54,6 +54,7 @@ exports.forgot = async (req, res) => {
     `You have been mailed a password reset Link. ${resetURL}`);
   // 4. Redirect to login page
   res.redirect('/login');
+  return () => {};
 };
 
 exports.reset = async (req, res) => {
@@ -66,6 +67,7 @@ exports.reset = async (req, res) => {
     return res.redirect('/login');
   }
   res.render('reset', { title: 'Reset Your Password' });
+  return () => {};
 };
 
 exports.confirmedPasswords = (req, res, next) => {
@@ -96,4 +98,5 @@ exports.update = async (req, res) => {
   await req.login(updatedUser);
   req.flash('success', '💃 Nice! Your password has been reset, you are now logged in!');
   res.redirect('/');
+  return () => {};
 };

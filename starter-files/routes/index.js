@@ -5,6 +5,7 @@ const storeController = require('../controllers/storeController');
 const userController = require('../controllers/userController');
 const { catchErrors } = require('../handlers/errorHandlers');
 const authController = require('../controllers/authController');
+const reviewController = require('../controllers/reviewController');
 // Do work here
 router.get('/', catchErrors(storeController.getStores));
 router.get('/stores', catchErrors(storeController.getStores));
@@ -49,6 +50,8 @@ router.post('/account/reset/:token',
 router.get('/map', storeController.mapPage);
 
 router.get('/hearts', authController.isLoggedIn, catchErrors(storeController.getHearts));
+
+router.post('/reviews/:id', authController.isLoggedIn, catchErrors(reviewController.addReview));
 
 /**
  * API

@@ -49,7 +49,7 @@ storeSchema.index({
 
 storeSchema.index({ location: '2dsphere' });
 
-storeSchema.pre('save', async function (next) {
+async function storeShemaCallback(next) {
   if (!this.isModified('name')) {
     next(); // skip it
     return;  // stop this function from running
@@ -65,14 +65,18 @@ storeSchema.pre('save', async function (next) {
   }
   next();
   // TODO: make more resiliant so slugs are unique
-});
+}
 
-storeSchema.statics.getTagsList = function () {
+storeSchema.pre('save', storeShemaCallback);
+
+function getTagsList() {
   return this.aggregate([
     { $unwind: '$tags' },
     { $group: { _id: '$tags', count: { $sum: 1 } } },
     { $sort: { count: -1 } },
   ]);
-};
+}
+
+storeSchema.statics.getTagsList = getTagsList;
 
 module.exports = mongoose.model('Store', storeSchema);
