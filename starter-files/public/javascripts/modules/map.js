@@ -11,7 +11,8 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
     .then((res) => {
       const places = res.data;
       if (!places.length) {
-        alert('no places found!');
+        // eslint-disable-next-line no-console
+        console.error('No results');
         return;
       }
       // create a bounds
@@ -29,6 +30,7 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
 
       // when someone clicks on a marker, show the details of that place
       markers.forEach(marker => marker.addListener('click', function () {
+        //eslint-disable-next-line no-console
         console.log(this.place);
         const html = `
           <div class="popup">
@@ -41,6 +43,7 @@ function loadPlaces(map, lat = 43.2, lng = -79.8) {
         infoWindow.setContent(html);
         infoWindow.open(map, this);
       }));
+
       // then zoom the map to fit all the markers perfectly
       map.setCenter(bounds.getCenter());
       map.fitBounds(bounds);
@@ -52,6 +55,7 @@ function makeMap(mapDiv) {
   // make our map
   const map = new google.maps.Map(mapDiv, mapOptions);
   loadPlaces(map);
+
   const input = $('[name="geolocate"]');
   const autocomplete = new google.maps.places.Autocomplete(input);
   autocomplete.addListener('place_changed', () => {

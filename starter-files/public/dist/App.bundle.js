@@ -1051,7 +1051,8 @@ function loadPlaces(map) {
   _axios2.default.get('/api/stores/near?lat=' + lat + '&lng=' + lng).then(function (res) {
     var places = res.data;
     if (!places.length) {
-      alert('no places found!');
+      // eslint-disable-next-line no-console
+      console.error('No results');
       return;
     }
     // create a bounds
@@ -1073,12 +1074,14 @@ function loadPlaces(map) {
     // when someone clicks on a marker, show the details of that place
     markers.forEach(function (marker) {
       return marker.addListener('click', function () {
+        //eslint-disable-next-line no-console
         console.log(this.place);
         var html = '\n          <div class="popup">\n            <a href="/store/' + this.place.slug + '">\n              <img src="/uploads/' + (this.place.photo || 'store.png') + '" alt="' + this.place.name + '" />\n              <p>' + this.place.name + ' - ' + this.place.location.address + '</p>\n            </a>\n          </div>\n        ';
         infoWindow.setContent(html);
         infoWindow.open(map, this);
       });
     });
+
     // then zoom the map to fit all the markers perfectly
     map.setCenter(bounds.getCenter());
     map.fitBounds(bounds);
@@ -1090,6 +1093,7 @@ function makeMap(mapDiv) {
   // make our map
   var map = new google.maps.Map(mapDiv, mapOptions);
   loadPlaces(map);
+
   var input = (0, _bling.$)('[name="geolocate"]');
   var autocomplete = new google.maps.places.Autocomplete(input);
   autocomplete.addListener('place_changed', function () {

@@ -38,7 +38,7 @@ html
 
     block messages
       if locals.flashes
-        .inner
+        .inner.inner--flashes
           .flash-messages
             - const categories = Object.keys(locals.flashes)
             each category in categories
@@ -48,6 +48,7 @@ html
                   button.flash__remove(onClick="this.parentElement.remove()") &times;
     .content
       block content
+        p This is the default!
 
     block scripts
       script(src=`https://maps.googleapis.com/maps/api/js?key=${process.env.MAP_KEY}&libraries=places`)

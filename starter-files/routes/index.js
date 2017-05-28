@@ -23,6 +23,7 @@ router.post('/add/:id',
   catchErrors(storeController.createStore));
 
 router.get('/stores/:id/edit', catchErrors(storeController.editStore));
+router.get('/stores/page/:page', catchErrors(storeController.getStores));
 
 router.get('/store/:slug', catchErrors(storeController.getStoreBySlug));
 
