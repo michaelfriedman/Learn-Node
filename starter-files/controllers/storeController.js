@@ -1,19 +1,24 @@
+/* eslint-disable no-underscore-dangle */
+
 const mongoose = require('mongoose');
+
 const Store = mongoose.model('Store');
+const User = mongoose.model('User');
+
 const multer = require('multer');
 const jimp = require('jimp');
 const uuid = require('uuid');
 
 const multerOptions = {
   storage: multer.memoryStorage(),
-  fileFilter (req, file, next) {
+  fileFilter(req, file, next) {
     const isPhoto = file.mimetype.startsWith('image/');
     if (isPhoto) {
       next(null, true);
     } else {
       next({ message: 'That file type isn\t allowed!' }, false);
     }
-  }
+  },
 };
 
 exports.homePage = (req, res) => {
@@ -76,7 +81,7 @@ exports.updateStore = async (req, res) => {
   // 1. Find and update the store
   const store = await Store.findOneAndUpdate({ _id: req.params.id }, req.body, {
     new: true, // return the new store instead of the old one
-    runValidators: true
+    runValidators: true,
   }).exec();
   req.flash('success', `Successfully updated <strong>${store.name}</strong>. <a href="/stores/${store.slug}">View Store</a>`);
   res.redirect(`/stores/${store._id}/edit`);
@@ -90,6 +95,7 @@ exports.getStoreBySlug = async (req, res, next) => {
 
   if (!store) return next();
   res.render('store', { store, title: store.name });
+  return () => {};
 };
 
 exports.getStoresByTag = async (req, res) => {
@@ -106,14 +112,14 @@ exports.searchStores = async (req, res) => {
   // first find stores that match
   .find({
     $text: {
-      $search: req.query.q
-    }
+      $search: req.query.q,
+    },
   }, {
-    score: { $meta: 'textScore' }
+    score: { $meta: 'textScore' },
   })
   // then sort them according to relevance 'score'
   .sort({
-    score: { $meta: 'textScore' }
+    score: { $meta: 'textScore' },
   })
   // limit to only five results
   .limit(5);
@@ -127,12 +133,25 @@ exports.mapStores = async (req, res) => {
       $near: {
         $geometry: {
           type: 'Point',
-          coordinates
+          coordinates,
         },
-        $maxDistance: 10000 // 10km
-      }
-    }
+        $maxDistance: 10000, // 10km
+      },
+    },
   };
-  const stores = await Store.find(q).select('slug name description location').limit(10);
+  const stores = await Store.find(q).select('slug name description location photo').limit(10);
   res.json(stores);
+};
+
+exports.mapPage = (req, res) => {
+  res.render('map', { title: 'Map!' });
+};
+
+exports.heartStore = async (req, res) => {
+  const hearts = req.user.hearts.map(obj => obj.toString());
+  const operator = hearts.includes(req.params.id) ? '$pull' : '$addToSet';
+  const user = await User.findByIdAndUpdate(req.user._id,
+    { [operator]: { hearts: req.params.id } },
+    { new: true });
+  res.json(user);
 };
